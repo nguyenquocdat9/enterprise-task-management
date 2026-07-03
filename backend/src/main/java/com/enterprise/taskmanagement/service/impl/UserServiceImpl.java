@@ -4,6 +4,7 @@ import com.enterprise.taskmanagement.dto.auth.RegisterRequest;
 import com.enterprise.taskmanagement.dto.auth.RegisterResponse;
 import com.enterprise.taskmanagement.entity.User;
 import com.enterprise.taskmanagement.entity.UserRole;
+import com.enterprise.taskmanagement.exception.EmailAlreadyExistsException;
 import com.enterprise.taskmanagement.repository.UserRepository;
 import com.enterprise.taskmanagement.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RegisterResponse register(RegisterRequest request) {
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new EmailAlreadyExistsException("Email already exists");
+        }
+
         User user = User.builder()
                 .email(request.getEmail())
                 .password(request.getPassword())
